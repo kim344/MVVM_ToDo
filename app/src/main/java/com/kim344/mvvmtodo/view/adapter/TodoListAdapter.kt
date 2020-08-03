@@ -4,9 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kim344.mvvmtodo.R
 import com.kim344.mvvmtodo.model.TodoModel
+import io.reactivex.Observable
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.item_todo.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,8 +38,16 @@ class TodoListAdapter() :
     }
 
     fun setTodoItems(todoItems : List<TodoModel>) {
-        this.todoItems = todoItems
-        notifyDataSetChanged()
+        Observable.just(todoItems)
+            .subscribeOn(AndroidSchedulers.mainThread())
+            .observeOn(Schedulers.io())
+            .map { DiffUtil.calculateDiff(TodoListDiffCallback(this.todoItems, todoItems)) }
+            .subscribe({
+                this.todoItems = todoItems
+                it.dispatchUpdatesTo(this)
+            },{
+                // Handle Error
+            })
     }
 
     class TodoViewHolder(view: View): RecyclerView.ViewHolder(view) {
