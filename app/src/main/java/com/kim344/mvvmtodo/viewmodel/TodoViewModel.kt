@@ -23,4 +23,12 @@ class TodoViewModel(application: Application) : AndroidViewModel(application) {
         mTodoRepository.insertTodo(todoModel)
     }
 
+    fun updateTodo(todoModel: TodoModel){
+        mTodoRepository.updateTodo(todoModel)
+    }
+
+    fun deleteTodo(todoModel: TodoModel){
+        mTodoRepository.deleteTodo(todoModel)
+    }
+
 }

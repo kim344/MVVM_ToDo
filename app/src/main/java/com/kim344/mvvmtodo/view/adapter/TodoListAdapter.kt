@@ -20,10 +20,11 @@ class TodoListAdapter() :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var todoItems : List<TodoModel> = listOf()
+    var listener : OnTodoItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_todo,parent,false)
-        return TodoViewHolder(view)
+        return TodoViewHolder(view, listener)
     }
 
     override fun getItemCount(): Int {
@@ -50,11 +51,26 @@ class TodoListAdapter() :
             })
     }
 
-    class TodoViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    fun getItem(position: Int) : TodoModel{
+        return todoItems[position]
+    }
+
+    class TodoViewHolder(view: View, listener: OnTodoItemClickListener?): RecyclerView.ViewHolder(view) {
 
         private val title: TextView = view.tv_todo_title
         private val description: TextView = view.tv_todo_description
         private val createdDate: TextView = view.tv_todo_created_date
+
+        init {
+            view.setOnClickListener {
+                listener?.onTodoItemClick(adapterPosition)
+            }
+
+            view.setOnLongClickListener {
+                listener?.onTodoItemLongClick(adapterPosition)
+                return@setOnLongClickListener true
+            }
+        }
 
         fun bind(todoModel: TodoModel) {
 
@@ -68,6 +84,11 @@ class TodoListAdapter() :
             return simpleDateFormat.format((Date(this)))
         }
 
+    }
+
+    interface OnTodoItemClickListener {
+        fun onTodoItemClick(position: Int)
+        fun onTodoItemLongClick(position: Int)
     }
 
 }

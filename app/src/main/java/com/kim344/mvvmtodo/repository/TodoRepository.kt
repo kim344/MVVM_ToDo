@@ -36,4 +36,24 @@ class TodoRepository(application: Application) {
                 // Handle Error.
             })
     }
+
+    fun updateTodo(todoModel: TodoModel){
+        Observable.just(todoModel)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                mTodoDAO.updateTodo(todoModel)
+            },{
+                //Handle Error
+            })
+    }
+
+    fun deleteTodo(todoModel: TodoModel){
+        Observable.just(todoModel)
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                mTodoDAO.deleteTodo(todoModel)
+            },{
+                //Handle Error
+            })
+    }
 }
